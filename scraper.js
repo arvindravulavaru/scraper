@@ -96,7 +96,7 @@ async function scrapeUrl(url, retries = 0) {
             metaData.push({
                 url,
                 path: fileName,
-                title: $('title').text()
+                title: $('title').first().text()
             })
             ctr++;
         }
@@ -116,19 +116,17 @@ async function scrapeUrl(url, retries = 0) {
 queue.push({ url: base, retries: 0 }); // start with the root URL
 
 queue.drain(() => {
-    console.log('All items have been processed! writing meta data and building tarball. Please wait!');
     // write meta data to file
     fs.writeFileSync(path.join(filepath, 'metadata.json'), JSON.stringify(metaData, null, 2));
 
     // logic to create tar ball
-
     tar.c(
         {
             gzip: true,
             file: 'tar-ball.tar.gz',
             cwd: filepath
         },
-        fs.readdirSync(directoryPath)
+        fs.readdirSync(filepath)
     )
         .then(() => {
             console.log(`Tarball created}`);
@@ -137,4 +135,5 @@ queue.drain(() => {
             console.error(`Error creating tarball: ${err}`);
         });
 
+    console.log('All items have been processed!');
 });
