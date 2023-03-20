@@ -1,2 +1,2 @@
 # scraper
-Python scraper for Shopify.dev
+Node.js scraper to scrape `https://shopify.dev`.
